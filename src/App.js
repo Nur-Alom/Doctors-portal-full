@@ -5,20 +5,21 @@ import {
   Route
 } from "react-router-dom";
 import Home from './Pages/Home/Home/Home';
+import Appointment from './Pages/Appointment/Appointment/Appointment';
 
 function App() {
   return (
     <div className="App">
       <Router>
         <Switch>
-          <Route path="/">
+          <Route exact path="/">
             <Home></Home>
           </Route>
           <Route path="/home">
             <Home></Home>
           </Route>
-          <Route path="">
-
+          <Route path="/appointment">
+            <Appointment></Appointment>
           </Route>
           <Route></Route>
         </Switch>
