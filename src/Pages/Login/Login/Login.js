@@ -5,7 +5,7 @@ import { NavLink, useLocation, useHistory } from 'react-router-dom';
 import useAuth from '../../../hooks/useAuth';
 
 const Login = () => {
-    const { user, loginUser, loading, authError } = useAuth
+    const { user, loginUser, loading, authError, handleGoogleLogin } = useAuth();
     const [loginData, setLoginData] = useState({});
     const location = useLocation();
     const history = useHistory();
@@ -19,9 +19,13 @@ const Login = () => {
     }
 
     const handleLoginSubmit = (e) => {
-        loginUser(loginData.email, loginData.password, location, history);
-        e.preventDefault();
+        e.preventDefault()
+        loginUser(loginData?.email, loginData?.password, location, history);
     };
+
+    const handleGoogle = () => {
+        handleGoogleLogin(location, history);
+    }
 
     return (
         <Container>
@@ -45,7 +49,7 @@ const Login = () => {
                             type="password"
                             id="standard-basic"
                             variant="standard" />
-                        <Button sx={{ width: "75%", m: 1 }} type="submit" variant="outlined">Login</Button>
+                        <Button sx={{ width: "75%", m: 1 }} type="Submit" variant="outlined">Login</Button>
                         <NavLink
                             style={{ textDecoration: "none", bg: "white" }}
                             to="/register">
@@ -55,6 +59,8 @@ const Login = () => {
                         {user?.email && <Alert severity="success">User Created Successfully</Alert>}
                         {authError && <Alert severity="error">{authError}</Alert>}
                     </form>
+                    <p>-------------------------</p>
+                    <Button onClick={handleGoogle} variant="contained">Google Login</Button>
                 </Grid>
                 <Grid item xs={12} md={6}>
                     <img style={{ width: "100%" }} src={login} alt="" />

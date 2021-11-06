@@ -11,8 +11,8 @@ const bannerBG = {
 
 const verticalCenter = {
     display: "flex",
-    height: 400,
-    alignItem: "center"
+    alignItems: "center",
+    height: 400
 }
 
 const Banner = () => {
@@ -28,13 +28,13 @@ const Banner = () => {
                         <Typography variant="h6" sx={{ my: 3, fontSize: 13, color: "gray", fontWeight: 300 }}>
                             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsum repellat cupiditate temporibus nisi. Porro, voluptatem ab aspernatur dolor magni obcaecati.
                         </Typography>
-                        <Button variant="contained">Get Appointment</Button>
+                        <Button
+                            style={{ backgroundColor: '#5CE7ED' }} variant="contained">Get Appointment</Button>
                     </Box>
                 </Grid>
-                <Grid item xs={12} md={7} style={verticalCenter} >
-                    <img style={{ width: "300px" }} src={chair} alt="" />
+                <Grid item xs={12} md={6} style={verticalCenter} >
+                    <img style={{ width: '450px', marginLeft: 'auto' }} src={chair} alt="" />
                 </Grid>
-
             </Grid>
         </Container>
     );
