@@ -46,7 +46,7 @@ const BookingModal = ({ openBooking, handleBookingClose, booking, date, setBooki
         }
         // console.log(appointment);
         // 
-        fetch('http://localhost:5000/appointments', {
+        fetch('https://limitless-thicket-61522.herokuapp.com/appointments', {
             method: 'POST',
             headers: {
                 'content-type': 'application/json'
