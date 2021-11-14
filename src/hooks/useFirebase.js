@@ -49,7 +49,7 @@ const useFirebase = () => {
         setLoading(true);
         signInWithEmailAndPassword(auth, email, password)
             .then((result) => {
-                const destination = location?.state?.form || '/';
+                const destination = location?.state?.from || '/';
                 history.replace(destination);
                 setAuthError('');
             })
@@ -80,9 +80,9 @@ const useFirebase = () => {
     const logout = () => {
         setLoading(true);
         signOut(auth).then(() => {
-            // Sign-out successful.
+
         }).catch((error) => {
-            // An error happened.
+
         })
             .finally(() => setLoading(false));
     };

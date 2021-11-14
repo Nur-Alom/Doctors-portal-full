@@ -19,8 +19,8 @@ const Login = () => {
     }
 
     const handleLoginSubmit = (e) => {
-        e.preventDefault()
         loginUser(loginData?.email, loginData?.password, location, history);
+        e.preventDefault()
     };
 
     const handleGoogle = () => {
