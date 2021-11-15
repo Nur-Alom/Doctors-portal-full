@@ -13,7 +13,7 @@ const Payment = () => {
     const { appointmentId } = useParams();
 
     useEffect(() => {
-        fetch(`http://localhost:5000/appointments/${appointmentId}`)
+        fetch(`https://limitless-thicket-61522.herokuapp.com/appointments/${appointmentId}`)
             .then(res => res.json())
             .then(data => setAppointment(data))
     }, [appointmentId])
@@ -22,10 +22,10 @@ const Payment = () => {
         <div>
             <h2>Please Pay For: {appointmentId}</h2>
             <h1>Pay: ${appointment.price}</h1>
-            <Elements stripe={stripePromise}>
+            {appointment?.price && <Elements stripe={stripePromise}>
                 <CheckoutForm
                     appointment={appointment} />
-            </Elements>
+            </Elements>}
         </div>
     );
 };

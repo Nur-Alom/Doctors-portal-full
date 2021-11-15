@@ -1,13 +1,27 @@
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 
 const CheckoutForm = ({ appointment }) => {
-    const [error, setError] = useState('');
     const { price } = appointment;
-
     const stripe = useStripe();
     const elements = useElements();
+
+    const [error, setError] = useState('');
+    const [clientSecret, setClientSecret] = useState('');
+
+
+    useEffect(() => {
+        fetch('https://limitless-thicket-61522.herokuapp.com/create-payment-intent', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({ price })
+        })
+            .then(res => res.json())
+            .then(data => console.log(data))
+    }, [price])
 
     const handleSubmit = async (e) => {
         e.preventDefault();
