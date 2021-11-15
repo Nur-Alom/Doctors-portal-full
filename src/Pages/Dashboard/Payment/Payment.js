@@ -1,33 +1,44 @@
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
-import React from 'react';
-import { useEffect } from 'react';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
+import { loadStripe } from '@stripe/stripe-js';
 import CheckoutForm from './CheckoutForm';
+import { Elements } from '@stripe/react-stripe-js';
 
-const stripePromise = loadStripe('pk_test_51JvmiKK4aMQOy8nYt0GpU5jQSeDqCMwqFw2YU3Rdp4eGT576pYfxA35hNAW1cKNIxfvzXXWb7VqpwIIGQwt9caIx00aLYUuG8M')
+
+const stripePromise = loadStripe('pk_test_51JvTmwKKPIXU1Tgx8SiIyxMFYTIyOKZFEBJQhEUaFN444MPUgsn6zscUL43IVaWtVmJueXwhyPsNeThjc4Pu2RtN00ZO7uUvaI')
 
 const Payment = () => {
-    const [appointment, setAppointment] = useState({});
     const { appointmentId } = useParams();
-
+    const [appointment, setAppointment] = useState({});
     useEffect(() => {
-        fetch(`https://limitless-thicket-61522.herokuapp.com/appointments/${appointmentId}`)
+        fetch(`http://localhost:5000/appointments/${appointmentId}`)
             .then(res => res.json())
-            .then(data => setAppointment(data))
-    }, [appointmentId])
-
+            .then(data => setAppointment(data));
+    }, [appointmentId]);
     return (
         <div>
-            <h2>Please Pay For: {appointmentId}</h2>
-            <h1>Pay: ${appointment.price}</h1>
+            <h2>Please Pay for: {appointment.patientName} for {appointment.serviceName}</h2>
+            <h4>Pay: ${appointment.price}</h4>
             {appointment?.price && <Elements stripe={stripePromise}>
                 <CheckoutForm
-                    appointment={appointment} />
+                    appointment={appointment}
+                />
             </Elements>}
         </div>
     );
 };
 
 export default Payment;
+
+/*
+1. install stripe and stripe-react
+2. set publishable key
+3. Elements
+4. Checkout Form
+-----
+5. Create payment method
+6. server: create payment Intent api
+7. Load client secret
+8. ConfirmCard payment
+9. handle user error
+*/

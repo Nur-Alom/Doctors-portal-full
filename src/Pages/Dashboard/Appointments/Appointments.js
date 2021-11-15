@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import useAuth from '../../../hooks/useAuth';
+import React, { useState, useEffect } from 'react';
+import useAuth from './../../../hooks/useAuth';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -11,7 +11,8 @@ import { Link } from 'react-router-dom';
 
 const Appointments = ({ date }) => {
     const { user, token } = useAuth();
-    const [appointments, setAppointments] = useState([]);
+    const [appointments, setAppointments] = useState([])
+
     useEffect(() => {
         const url = `https://limitless-thicket-61522.herokuapp.com/appointments?email=${user.email}&date=${date.toLocaleDateString()}`
         fetch(url, {
@@ -20,19 +21,20 @@ const Appointments = ({ date }) => {
             }
         })
             .then(res => res.json())
-            .then(data => setAppointments(data))
+            .then(data => setAppointments(data));
     }, [date, user.email, token])
 
     return (
         <div>
+            <h2>Appointments: {appointments.length}</h2>
             <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="Appointments table">
+                <Table sx={{}} aria-label="Appointments table">
                     <TableHead>
                         <TableRow>
                             <TableCell>Name</TableCell>
-                            <TableCell>Time</TableCell>
-                            <TableCell>Services</TableCell>
-                            <TableCell>Action</TableCell>
+                            <TableCell align="right">Time</TableCell>
+                            <TableCell align="right">Service</TableCell>
+                            <TableCell align="right">Action</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -44,9 +46,10 @@ const Appointments = ({ date }) => {
                                 <TableCell component="th" scope="row">
                                     {row.patientName}
                                 </TableCell>
-                                <TableCell>{row.time}</TableCell>
-                                <TableCell>{row.serviceName}</TableCell>
-                                <TableCell>{row.Payment ? 'Paid' :
+                                <TableCell align="right">{row.time}</TableCell>
+                                <TableCell align="right">{row.serviceName}</TableCell>
+                                <TableCell align="right">{row.payment ?
+                                    'Paid' :
                                     <Link to={`/dashboard/payment/${row._id}`}><button>Pay</button></Link>
                                 }</TableCell>
                             </TableRow>

@@ -5,11 +5,10 @@ import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
-import { Button } from '@mui/material';
-import useAuth from '../../../hooks/useAuth';
+import Button from '@mui/material/Button';
+import useAuth from './../../../hooks/useAuth';
 
 const style = {
-    borderRadius: "15px",
     position: 'absolute',
     top: '50%',
     left: '50%',
@@ -24,7 +23,6 @@ const style = {
 const BookingModal = ({ openBooking, handleBookingClose, booking, date, setBookingSuccess }) => {
     const { name, time, price } = booking;
     const { user } = useAuth();
-
     const initialInfo = { patientName: user.displayName, email: user.email, phone: '' }
     const [bookingInfo, setBookingInfo] = useState(initialInfo);
 
@@ -37,7 +35,7 @@ const BookingModal = ({ openBooking, handleBookingClose, booking, date, setBooki
     }
 
     const handleBookingSubmit = e => {
-        e.preventDefault();
+        // collect data
         const appointment = {
             ...bookingInfo,
             time,
@@ -45,8 +43,7 @@ const BookingModal = ({ openBooking, handleBookingClose, booking, date, setBooki
             serviceName: name,
             date: date.toLocaleDateString()
         }
-        // console.log(appointment);
-        // 
+        // send to the server
         fetch('https://limitless-thicket-61522.herokuapp.com/appointments', {
             method: 'POST',
             headers: {
@@ -57,10 +54,12 @@ const BookingModal = ({ openBooking, handleBookingClose, booking, date, setBooki
             .then(res => res.json())
             .then(data => {
                 if (data.insertedId) {
-                    setBookingSuccess(true)
+                    setBookingSuccess(true);
                     handleBookingClose();
                 }
-            })
+            });
+
+        e.preventDefault();
     }
 
     return (
@@ -77,19 +76,19 @@ const BookingModal = ({ openBooking, handleBookingClose, booking, date, setBooki
         >
             <Fade in={openBooking}>
                 <Box sx={style}>
-                    <Typography sx={{ textAlign: "center", m: 2 }} id="transition-modal-title" variant="h6" component="h2">
+                    <Typography id="transition-modal-title" variant="h6" component="h2">
                         {name}
                     </Typography>
                     <form onSubmit={handleBookingSubmit}>
                         <TextField
-                            sx={{ width: "100%", m: 1 }}
                             disabled
+                            sx={{ width: '90%', m: 1 }}
                             id="outlined-size-small"
                             defaultValue={time}
                             size="small"
                         />
                         <TextField
-                            sx={{ width: "100%", m: 1 }}
+                            sx={{ width: '90%', m: 1 }}
                             id="outlined-size-small"
                             name="patientName"
                             onBlur={handleOnBlur}
@@ -97,7 +96,7 @@ const BookingModal = ({ openBooking, handleBookingClose, booking, date, setBooki
                             size="small"
                         />
                         <TextField
-                            sx={{ width: "100%", m: 1 }}
+                            sx={{ width: '90%', m: 1 }}
                             id="outlined-size-small"
                             name="email"
                             onBlur={handleOnBlur}
@@ -105,18 +104,18 @@ const BookingModal = ({ openBooking, handleBookingClose, booking, date, setBooki
                             size="small"
                         />
                         <TextField
-                            sx={{ width: "100%", m: 1 }}
+                            sx={{ width: '90%', m: 1 }}
                             id="outlined-size-small"
                             name="phone"
                             onBlur={handleOnBlur}
-                            placeholder="Your Phone Number"
+                            defaultValue="Phone Number"
                             size="small"
                         />
                         <TextField
                             disabled
-                            sx={{ width: "100%", m: 1 }}
+                            sx={{ width: '90%', m: 1 }}
                             id="outlined-size-small"
-                            defaultValue={date}
+                            defaultValue={date.toDateString()}
                             size="small"
                         />
                         <Button type="submit" variant="contained">Submit</Button>

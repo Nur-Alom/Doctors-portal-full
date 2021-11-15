@@ -1,15 +1,14 @@
-import { useEffect, useState } from "react";
-import { getAuth, createUserWithEmailAndPassword, signOut, onAuthStateChanged, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile, getIdToken } from "firebase/auth";
-import initializeFirebase from "../Pages/Login/Firebase/firebase.init";
+import initializeFirebase from "../Pages/Login/Login/Firebase/firebase.init";
+import { useState, useEffect } from 'react';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, updateProfile, getIdToken, signOut } from "firebase/auth";
 
 
-// initialize.
+// initialize firebase app
 initializeFirebase();
-
 
 const useFirebase = () => {
     const [user, setUser] = useState({});
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
     const [authError, setAuthError] = useState('');
     const [admin, setAdmin] = useState(false);
     const [token, setToken] = useState('');
@@ -17,38 +16,34 @@ const useFirebase = () => {
     const auth = getAuth();
     const googleProvider = new GoogleAuthProvider();
 
-
-    // Create an User/Register User.
-    const registerNewUser = (email, password, name, history) => {
-        setLoading(true)
+    const registerUser = (email, password, name, history) => {
+        setIsLoading(true);
         createUserWithEmailAndPassword(auth, email, password)
-            .then((result) => {
+            .then((userCredential) => {
                 setAuthError('');
                 const newUser = { email, displayName: name };
                 setUser(newUser);
-                // save db
+                // save user to the database
                 saveUser(email, name, 'POST');
-                // 
+                // send name to firebase after creation
                 updateProfile(auth.currentUser, {
                     displayName: name
                 }).then(() => {
-
                 }).catch((error) => {
-
                 });
                 history.replace('/');
             })
             .catch((error) => {
                 setAuthError(error.message);
+                console.log(error);
             })
-            .finally(() => setLoading(false));
-    };
+            .finally(() => setIsLoading(false));
+    }
 
-    // Login User
     const loginUser = (email, password, location, history) => {
-        setLoading(true);
+        setIsLoading(true);
         signInWithEmailAndPassword(auth, email, password)
-            .then((result) => {
+            .then((userCredential) => {
                 const destination = location?.state?.from || '/';
                 history.replace(destination);
                 setAuthError('');
@@ -56,63 +51,56 @@ const useFirebase = () => {
             .catch((error) => {
                 setAuthError(error.message);
             })
-            .finally(() => setLoading(false));
-    };
-
-    // 
-    const handleGoogleLogin = (location, history) => {
-        setLoading(true);
-        signInWithPopup(auth, googleProvider)
-            .then((result) => {
-                const user = result.user
-                saveUser(user.email, user.displayName, 'PUT');
-                const destination = location?.state?.form || '/';
-                history.replace(destination);
-                setAuthError('');
-            })
-            .catch((error) => {
-                setAuthError(error.message);
-            })
-            .finally(() => setLoading(false));
+            .finally(() => setIsLoading(false));
     }
 
-    // User Logout/SignOut
-    const logout = () => {
-        setLoading(true);
-        signOut(auth).then(() => {
+    const signInWithGoogle = (location, history) => {
+        setIsLoading(true);
+        signInWithPopup(auth, googleProvider)
+            .then((result) => {
+                const user = result.user;
+                saveUser(user.email, user.displayName, 'PUT');
+                setAuthError('');
+                const destination = location?.state?.from || '/';
+                history.replace(destination);
+            }).catch((error) => {
+                setAuthError(error.message);
+            }).finally(() => setIsLoading(false));
+    }
 
-        }).catch((error) => {
-
-        })
-            .finally(() => setLoading(false));
-    };
-
-    // User Observation.
+    // observer user state
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
+        const unsubscribed = onAuthStateChanged(auth, (user) => {
             if (user) {
                 setUser(user);
                 getIdToken(user)
                     .then(idToken => {
                         setToken(idToken);
                     })
+            } else {
+                setUser({})
             }
-            else {
-                setUser({});
-            }
-            setLoading(false);
+            setIsLoading(false);
         });
-        return () => unsubscribe;
-    }, [auth]);
+        return () => unsubscribed;
+    }, [auth])
 
-    // 
     useEffect(() => {
         fetch(`https://limitless-thicket-61522.herokuapp.com/users/${user.email}`)
             .then(res => res.json())
             .then(data => setAdmin(data.admin))
     }, [user.email])
 
-    // Save Database.
+    const logout = () => {
+        setIsLoading(true);
+        signOut(auth).then(() => {
+            // Sign-out successful.
+        }).catch((error) => {
+            // An error happened.
+        })
+            .finally(() => setIsLoading(false));
+    }
+
     const saveUser = (email, displayName, method) => {
         const user = { email, displayName };
         fetch('https://limitless-thicket-61522.herokuapp.com/users', {
@@ -129,13 +117,12 @@ const useFirebase = () => {
         user,
         admin,
         token,
-        loading,
+        isLoading,
         authError,
-        handleGoogleLogin,
-        registerNewUser,
+        registerUser,
         loginUser,
+        signInWithGoogle,
         logout,
-
     }
 }
 

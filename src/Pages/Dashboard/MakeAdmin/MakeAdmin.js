@@ -1,18 +1,17 @@
-import { Alert, Button, TextField } from '@mui/material';
+import { Button, TextField, Alert } from '@mui/material';
 import React, { useState } from 'react';
-import useAuth from '../../../hooks/useAuth';
+import useAuth from './../../../hooks/useAuth';
 
 const MakeAdmin = () => {
-    const { token } = useAuth();
     const [email, setEmail] = useState('');
     const [success, setSuccess] = useState(false);
+    const { token } = useAuth();
 
     const handleOnBlur = e => {
         setEmail(e.target.value);
     }
-
-    const handleAdminSubmit = (e) => {
-        const user = { email }
+    const handleAdminSubmit = e => {
+        const user = { email };
         fetch('https://limitless-thicket-61522.herokuapp.com/users/admin', {
             method: 'PUT',
             headers: {
@@ -24,25 +23,26 @@ const MakeAdmin = () => {
             .then(res => res.json())
             .then(data => {
                 if (data.modifiedCount) {
-                    console.log(data)
+                    console.log(data);
                     setSuccess(true);
                 }
             })
-        e.preventDefault();
+
+        e.preventDefault()
     }
     return (
         <div>
-            <h2>Make Me admin</h2>
+            <h2>Make an Admin</h2>
             <form onSubmit={handleAdminSubmit}>
                 <TextField
-                    sx={{ width: "50%" }}
-                    type="email"
+                    sx={{ width: '50%' }}
                     label="Email"
+                    type="email"
                     onBlur={handleOnBlur}
                     variant="standard" />
                 <Button type="submit" variant="contained">Make Admin</Button>
             </form>
-            {success && <Alert severity="success">Made Admin Successfully</Alert>}
+            {success && <Alert severity="success">Made Admin successfully!</Alert>}
         </div>
     );
 };
